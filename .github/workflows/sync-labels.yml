@@ -49,3 +49,5 @@ jobs:
           update_label "priority: low" "C2E0C6" "Low priority"
           update_label "priority: medium" "FBCA04" "Medium priority"
           update_label "priority: high" "B60205" "High priority"
+
+          echo "Repository labels synchronized successfully."
