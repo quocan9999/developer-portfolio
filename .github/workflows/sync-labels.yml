@@ -1,0 +1,51 @@
+name: Sync repository labels
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/sync-labels.yml
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  sync-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update label colors and descriptions
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          update_label() {
+            local name="$1"
+            local color="$2"
+            local description="$3"
+            local encoded
+
+            encoded=$(python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$name")
+
+            gh api \
+              --method PATCH \
+              "repos/${GH_REPO}/labels/${encoded}" \
+              -f new_name="$name" \
+              -f color="$color" \
+              -f description="$description"
+          }
+
+          update_label "epic" "5319E7" "Large body of work spanning multiple tasks"
+          update_label "backend" "1D76DB" "Backend API and server-side work"
+          update_label "frontend" "0E8A16" "Frontend application work"
+          update_label "devops" "D93F0B" "Docker, infrastructure, CI/CD, and deployment"
+          update_label "testing" "6F42C1" "Automated testing and quality assurance"
+          update_label "ui" "E4E669" "User interface design and implementation"
+          update_label "priority: low" "C2E0C6" "Low priority"
+          update_label "priority: medium" "FBCA04" "Medium priority"
+          update_label "priority: high" "B60205" "High priority"
