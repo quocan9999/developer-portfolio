@@ -1,0 +1,1 @@
+Label sync workflow should be triggered by updating its own file.
